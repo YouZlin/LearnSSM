@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	   xmlns:mvc="http://www.springframework.org/schema/mvc"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:aop="http://www.springframework.org/schema/aop" 
+	   xmlns:tx="http://www.springframework.org/schema/tx"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	                        http://www.springframework.org/schema/beans/spring-beans.xsd  
+	                        http://www.springframework.org/schema/mvc 
+	                        http://www.springframework.org/schema/mvc/spring-mvc.xsd 
+	                        http://www.springframework.org/schema/context 
+	                        http://www.springframework.org/schema/context/spring-context.xsd 
+	                        http://www.springframework.org/schema/aop 
+	                        http://www.springframework.org/schema/aop/spring-aop.xsd 
+	                        http://www.springframework.org/schema/tx 
+	                        http://www.springframework.org/schema/tx/spring-tx.xsd">
+    <!-- 普通创建bean -->
+    <bean id="userDao" class="com.spring.container.UserDao"></bean>
+    <bean id="userService" class="com.spring.container.UserService">
+    	<!-- 
+    		以set方法名称为索引,首字母为小写
+    		ref引用当前beans内部存在的bean
+    	 -->
+    	<property name="userDao" ref="userDao"></property>
+    </bean>
+    
+    
+    <!-- 工厂模式创建bean -->
+    <!-- <bean id="userServiceFactory" class="com.spring.container.UserServiceFactory"></bean>
+	<bean id="userService" factory-bean="userServiceFactory" factory-method="createUserService"></bean>
+	 -->
+	 
+	<!-- 静态类工厂创建bean -->
+	<!-- <bean id="userService" class="com.spring.container.UserServiceStaticFactory" factory-method="createUserService"></bean> -->
+	
+	<!-- scope作用域 -->
+	<!-- 
+		singleton：默认值,单例
+		prototype：原型，每次从容器中获取时都返回新的对象
+		request：对于每个HTTP请求都会创建一个新的对象
+		session：每个HTTP会话创建一个新的对象
+		globalSession：每个HTTP全局会话创建一个新的对象
+		application：每个ServletContext创建一个新的对象
+	 -->
+	<!-- <bean id="userService" scope="prototype" class="com.spring.container.UserServiceStaticFactory" factory-method="createUserService"></bean> -->
+	
+	
+	<!-- 
+		创建数据库连接池,注入默认值
+		当前使用是mysql8,需要配置 useSSL,serviceTimezone,characterEncoding,useUnicode=true
+	-->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="com.mysql.cj.jdbc.Driver"></property>
+		<property name="jdbcUrl" value="jdbc:mysql://localhost:3306/springDemo?useUnicode=true&amp;characterEncoding=UTF-8&amp;useSSL=false&amp;serverTimezone=UTC"></property>
+		<property name="user" value="root"></property>
+		<property name="password" value="root"></property>
+	</bean>
+	
+	<!-- bean注入集合-->
+	<bean id="team" class="com.spring.container.Team">
+		<property name="members">
+			<list>
+				<value>张姗姗</value>
+				<value>李思思</value>
+				<value>王武武</value>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- 
+		带有构造函数的bean
+		index:传入参数在构造函数中的索引位置
+		value:是正常的字符串之类的类型
+		ref:构造函数的参数是bean类型的时候使用
+		name:指定参数的名称进行索引
+	 -->
+	 <bean id="user" class="com.spring.container.User">
+		<constructor-arg index="0" value="张珊珊"></constructor-arg>
+		<constructor-arg name="age" value="16"></constructor-arg>
+	</bean>
+</beans>
