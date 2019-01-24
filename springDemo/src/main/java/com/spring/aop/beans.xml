@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	   xmlns:mvc="http://www.springframework.org/schema/mvc"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:aop="http://www.springframework.org/schema/aop" 
+	   xmlns:tx="http://www.springframework.org/schema/tx"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	                        http://www.springframework.org/schema/beans/spring-beans.xsd  
+	                        http://www.springframework.org/schema/mvc 
+	                        http://www.springframework.org/schema/mvc/spring-mvc.xsd 
+	                        http://www.springframework.org/schema/context 
+	                        http://www.springframework.org/schema/context/spring-context.xsd 
+	                        http://www.springframework.org/schema/aop 
+	                        http://www.springframework.org/schema/aop/spring-aop.xsd 
+	                        http://www.springframework.org/schema/tx 
+	                        http://www.springframework.org/schema/tx/spring-tx.xsd">
+   	
+   	<bean id="mytarget" class="com.spring.aop.MyTarget"></bean>
+   	<bean id="logAspect" class="com.spring.aop.LogAspect"></bean>
+    <bean id="myAspect" class="com.spring.aop.MyAspect"></bean>
+    
+    
+    <aop:config>
+    	<aop:aspect ref="logAspect">
+    		<!-- 切入点表达式 -->
+    		<!-- 
+    			常用的表达式字段:execution、@target、@annotation等
+    			execution用来描述目标方法的签名，由6个部分组成：
+				访问修饰符 返回值类型 类.方法名(参数列表) 异常声明
+				除了返回值类型、方法名、参数列表这三部分不可省略外，其余部分都可省略
+				
+				各部分常用写法如下：
+				访问修饰符：一般省略，表示任意，但受代理方式的限制（CGLIB对private方法无效）
+				返回值类型：*  表示任意
+				类的包：包全名、前缀* 、..（某包和其子孙包）
+				类的类名：	类名、前缀*、*
+				方法名：	方法名、前缀*、*
+				参数列表：	..  表示任意
+				异常声明：一般省略，表示任意
+				
+				示例：
+				execution(* com.rupeng.aop.MyTarget.show(..))     MyTarget的所有show方法
+				execution(* com.rupeng.aop.*.*(..))     aop包下所有类的所有方法
+				execution(* com.rupeng.aop..*.*(..))     aop包和其子孙包下所有类的所有方法
+				execution(* com.rupeng.aop.*.add*(..))     aop包下所有类的以add开头的方法
+				
+				通知方法不会被自己或其他通知增强，同一个目标对象中的方法相互调用时，被调用的方法这次调用不会被增强（被其他对象的方法调用时会被增强）
+				
+				@target描述了标注了某注解的类的所有方法
+				比如@target(com.rupeng.aop.MyAnnotation)表示标注了MyAnnotation注解的类的所有方法
+				
+				@annotation描述了标注了某注解的方法
+				比如@annotation(com.rupeng.aop.MyAnnotation2)表示标注了MyAnnotation2注解的所有方法
+				
+				
+				特别的，切入点表达式还可使用 &&  ||  ! 进行逻辑运算。比如@target(com.rupeng.aop.MyAnnotation) && execution(* com.rupeng.aop.*.*(..))  表示标注了MyAnnotation注解的类的所有方法和aop包下所有类的方法的交集
+				(注意&在xml中需要写成&amp;)
+    		 -->
+    		<!-- <aop:before method="log" pointcut="execution(* com.spring.aop.MyTarget.show(..))"/> -->
+    		
+    		<!-- <aop:before method="log" pointcut="@target(com.spring.aop.MyAnnotation)"/> -->
+    		
+    		<aop:before method="log" pointcut="@annotation(com.spring.aop.MyAnnotation2)"/>
+    	</aop:aspect>
+    	
+    	
+    	
+    	<aop:aspect ref="myAspect">
+    		<!-- 多个切入点表达式相同情况,创建一个可复用的切入点表达式进行复用 -->
+    		<aop:pointcut  id="myPonitcut" expression="execution(* com.spring.aop.MyTarget.show(..))"/>
+    		<!-- 通知类型:after-returning通知 -->
+    		<aop:after-returning method="myAfterReturnning" pointcut-ref="myPonitcut" returning="returnValue"/>
+    		<!-- 通知类型:after-throwing通知 -->
+    		<aop:after-throwing method="myAfterThrowing" pointcut-ref="myPonitcut" throwing="exception"/>
+    	</aop:aspect>
+    	
+    	
+    </aop:config>
+    
+    
+    
+    
+</beans>
