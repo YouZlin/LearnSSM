@@ -16,4 +16,14 @@ public class Test1 {
 		AbstractApplicationContext abstractApplicationContext=(AbstractApplicationContext) applicationContext;
 		abstractApplicationContext.destroy();
 	}
+	
+	@Test
+	public void test2() {
+		ApplicationContext applicationContext=new ClassPathXmlApplicationContext("com/spring/annotation/beans.xml");
+		UserService userService=(UserService) applicationContext.getBean("userService");
+		
+		System.out.println(userService.getUserDao());
+		System.out.println(userService.getApplicationContext());
+		System.out.println(userService.getTestField());
+	}
 }
