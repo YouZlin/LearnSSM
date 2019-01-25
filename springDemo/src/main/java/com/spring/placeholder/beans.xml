@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	   xmlns:mvc="http://www.springframework.org/schema/mvc"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:aop="http://www.springframework.org/schema/aop" 
+	   xmlns:tx="http://www.springframework.org/schema/tx"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	                        http://www.springframework.org/schema/beans/spring-beans.xsd  
+	                        http://www.springframework.org/schema/mvc 
+	                        http://www.springframework.org/schema/mvc/spring-mvc.xsd 
+	                        http://www.springframework.org/schema/context 
+	                        http://www.springframework.org/schema/context/spring-context.xsd 
+	                        http://www.springframework.org/schema/aop 
+	                        http://www.springframework.org/schema/aop/spring-aop.xsd 
+	                        http://www.springframework.org/schema/tx 
+	                        http://www.springframework.org/schema/tx/spring-tx.xsd">
+   	
+   	<!-- 在jdbc.properties中 符号&直接使用,在beans.xml配置中出现会异常,需要使用实体字符&amp; -->
+   	<!-- 
+   		system-properties-mode属性指定查找方式，取值如下：
+		NEVER 只从指定的文件中查找
+		FALLBACK 默认值，先查找指定文件，如果没有，再查找系统属性，即System.getProperties()
+		OVERRIDE 先查找系统属性，如果没有，再查找指定文件
+		ENVIRONMENT 为兼容旧版本而保留的，和OVERRIDE一致，但不建议再使用
+   	 -->
+    <context:property-placeholder location="classpath:com/spring/placeholder/jdbc.properties"/>
+   
+   <!-- 通过占位符配置数据库连接 -->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="${jdbc.driverClass}"></property>
+		<property name="jdbcUrl" value="${jdbc.jdbcUrl}"></property>
+		<property name="user" value="${jdbc.user}"></property>
+		<property name="password" value="${jdbc.password}"></property>
+	</bean>
+    
+</beans>

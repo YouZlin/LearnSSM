@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	   xmlns:mvc="http://www.springframework.org/schema/mvc"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:aop="http://www.springframework.org/schema/aop" 
+	   xmlns:task="http://www.springframework.org/schema/task"
+	   xmlns:tx="http://www.springframework.org/schema/tx"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	                        http://www.springframework.org/schema/beans/spring-beans.xsd  
+	                        http://www.springframework.org/schema/mvc 
+	                        http://www.springframework.org/schema/mvc/spring-mvc.xsd 
+	                        http://www.springframework.org/schema/context 
+	                        http://www.springframework.org/schema/context/spring-context.xsd 
+	                        http://www.springframework.org/schema/aop 
+	                        http://www.springframework.org/schema/aop/spring-aop.xsd 
+	                        http://www.springframework.org/schema/task 
+                        	http://www.springframework.org/schema/task/spring-task.xsd
+	                        http://www.springframework.org/schema/tx 
+	                        http://www.springframework.org/schema/tx/spring-tx.xsd">
+   	<!-- 
+   		配置task命名空间配置SpringTask相关信息
+   		xmlns:task="http://www.springframework.org/schema/task"
+   		xsi:schemaLocation="
+   		 					other_config_location
+   		 					http://www.springframework.org/schema/task 
+                        	http://www.springframework.org/schema/task/spring-task.xsd"
+   	 -->
+   	 
+   	 <bean id="myTask" class="com.spring.task.MyTask"></bean>
+    
+    <!-- 线程池 -->
+    <task:scheduler id="myScheduler" pool-size="10"/>
+    
+    <task:scheduled-tasks scheduler="myScheduler">
+    	<!-- 
+    		method指定要调度执行的任务方法
+			fixed-rate上次任务开始后间隔指定时间执行下一次（固定频率）
+			fixed-delay上次任务完成后间隔指定时间执行下一次（固定延迟）
+			initial-delay 任务在创建好之后延迟多长时间开始第一次调度，默认立即开始调度
+			cron 使用cron表达式指定调度规则
+    		
+    	 -->
+    	<!-- <task:scheduled ref="myTask" method="doTask" fixed-rate="5000" initial-delay="2000"/> -->
+    	<task:scheduled ref="myTask" method="doTask" cron="0/5 * * * * ?"/>
+    </task:scheduled-tasks>
+    
+    <!-- 
+    	cron表达式用来指定调度规则，由6个或7个时间字段按顺序组成，并使用空格分隔：
+		秒 分 时 日期 月份 星期
+		秒 分 时 日期 月份 星期 年
+		(新版本的Spring Task只支持6个时间字段的形式，不支持年)
+		
+		名称	取值范围	支持的有特殊含义的字符
+		秒	0-59	,  -  /  *
+		分	0-59	,  -  /  *
+		时	0-23	,  -  /  *
+		日期	1-31	,  -  /  *  ?  L  W
+		月份	1-12	,  -  /  *
+		星期	1-7		,  -  /  *  ?  L  #     （1表示星期日，2表示星期一）
+		
+		特殊字符含义如下：
+		,	表示枚举	1,10,20（秒）表示第1秒，第10秒和第20秒
+		-	表示范围	2-6（星期）表示从星期一到星期五
+		/	表示增量	0/5（秒）表示每隔5秒
+		*	表示每一个	*（时）表示每小时
+		?	为避免日期和星期冲突，在指定其中一个时，另一个使用?表示不指定
+		L	表示最后	6L（星期）表示某月的最后一个星期五
+		#	某月第几个星期几	7#2（星期）表示某月的第2个星期六
+		W	最近的有效工作日，9W（日期）表示如果9号在星期一到星期五之间，则就是9号；如果9号是星期六，则提前到8号（星期五）；如果9号是星期日，则顺延到10号（星期一）；注意不能跨月份
+		
+		完整的例子：
+		0 0 9 * * ?		每天早上9点整
+		0/5 * * * * ?		每隔5秒钟
+		0 0 8 1 * ?		每月1号的8点整
+		0 0 8 ? * 2#1 	每月的第一个星期一8点整
+
+    	
+     -->
+    
+</beans>
