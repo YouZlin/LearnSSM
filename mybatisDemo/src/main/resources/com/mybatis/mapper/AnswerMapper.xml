@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mybatis.mapper.AnswerMapper">
+
+	<!-- 二级缓存空间的关联性,共用一个缓存空间 -->
+	<cache-ref namespace="com.mybatis.mapper.QuestionMapper"/>
+
+	<resultMap type="Answer" id="resultMap1">
+		<id property="id" column="a_id"/>
+		<result property="content" column="content"/>
+		
+		<!-- 查询对象属于一对一或者多对一的情况下使用 -->
+		<association property="question" javaType="Question">
+			<id property="id" column="q_id"/>
+			<result property="description" column="description"/>
+		</association>
+	</resultMap>
+	<select id="selectById" resultMap="resultMap1" parameterType="long">
+		select a.id as a_id,a.content,q.id as q_id,q.description 
+		from T_Answers a left join T_Questions q on a.questionId=q.id
+		where a.id=#{id}
+	</select>
+</mapper>

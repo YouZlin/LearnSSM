@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+
+	<settings>
+	    <setting name="logImpl" value="LOG4J2"/><!-- 指定日志实习 -->
+	</settings>
+
+
+	<!-- 在全局配置中设置别名,在配置文件中使用别名 -->
+	<typeAliases>
+		<!-- 方式一 -->
+		<!-- <typeAlias type="com.mybatis.pojo.User" alias="User"/> -->
+		<!-- 方式二 :对普通类生成默认别名(小写),不包含接口,匿名类,内部类-->
+		<package name="com.mybatis.pojo"/><!-- com.mybatis.pojo.User ==> user -->
+	</typeAliases>
+	
+	<!-- PageHelper分页查询 -->
+	<plugins>
+		<plugin interceptor="com.github.pagehelper.PageHelper"></plugin>
+	</plugins>
+
+	
+	<environments default="test"><!-- 可以有多个环境,默认为id为test的环境 -->
+		<environment id="test">
+			<transactionManager type="JDBC" />
+			<dataSource type="POOLED">
+				<property name="driver" value="com.mysql.cj.jdbc.Driver"></property>
+				<property name="url" value="jdbc:mysql://localhost:3306/mybatisDemo?useUnicode=true&amp;characterEncoding=UTF-8&amp;useSSL=false&amp;serverTimezone=UTC"></property>
+				<property name="username" value="root"></property>
+				<property name="password" value="root"></property>
+			</dataSource>
+		</environment>
+	</environments>
+	
+	
+	<mappers>
+		<!-- 方式一:指定对应的配置文件 -->
+		<!-- <mapper resource="com/mybatis/mapper/UserMapper.xml"/> -->
+		<!-- 方式二 -->
+		<package name="com.mybatis.mapper"/>
+	</mappers>
+</configuration>

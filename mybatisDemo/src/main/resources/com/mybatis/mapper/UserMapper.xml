@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mybatis.mapper.UserMapper">
+
+	<!-- 
+		在UserMapper中开启二级缓存
+		select中使用useCache="false",将不添加至二级缓存 
+	 -->
+	<cache></cache>
+	
+	<!-- <select id="selectAll" resultType="com.mybatis.pojo.User"> -->
+	<!-- 在全局配置中设置别名,在配置文件中使用别名,别名不区分大小写 -->
+	<select id="selectAll" resultType="User">
+		select * from T_Users
+	</select>
+	
+	
+	<!-- 管理Inser语句 -->
+	<insert  id="insert" parameterType="User">
+		insert into T_Users(name,age)values(#{name},#{age})
+	</insert>
+	
+	<insert id="insert2" parameterType="string">
+		insert into T_Users(name)values(#{name})
+	</insert>
+
+	<update id="update" parameterType="User">
+		update T_Users set name=#{name},age=#{age} where id=#{id}
+	</update>
+	
+	<delete id="delete" parameterType="long">
+		delete from T_Users where id=#{id}
+	</delete>
+	
+	
+	
+	<!-- 插入标签执行删除操作,但最好不这么操作 -->
+	<insert id="delete2" parameterType="long">
+		delete from T_Users where id=#{id}
+	</insert>
+	
+	<!-- 另一种方式解决数据库字段名称和POJO属性名称不一致 -->
+	<resultMap type="User" id="resultMap1">
+		<id property="id" column="u_id"/>
+		<result property="name" column="u_name"/>
+		<result property="age" column="u_age"/>
+	</resultMap>
+	
+	<select id="selectById" parameterType="long" resultMap="resultMap1">
+	<!-- 如果数据库名称和POJO属性名称不一致,使用as指定别名和POJO的属性名相对应 -->
+	<!-- <select id="selectById" parameterType="long" resultType="User"> -->
+		select id as u_id,name as u_name,age as u_age 
+		from T_Users
+		where id=#{id}
+	</select>
+
+	<!-- 动态数据库语句 -->
+	<select id="select" parameterType="User" resultType="User">
+		select id,name,age
+		from T_Users
+		<!-- 
+			动态生成where语句 
+			AND和OR根据实际需求添加
+			AND和OR在实际中如果是第一个会自动移除
+		-->
+		<where>
+			<if test="id!=null">id=#{id}</if>
+			<if test="name!=null">and name=#{name}</if>
+			<if test="age!=null">and age=#{age}</if>
+		</where>
+	</select>
+	
+	<!-- 
+		sql可重用片段,
+		在映射文件复杂的情况下使用效果明显,一般不使用
+	 -->
+	<sql id="columns">
+		id,name,age
+	</sql>
+	<select id="select2" parameterType="User" resultType="User">
+		select <include refid="columns"></include>
+		from T_Users
+		<!-- 
+			动态生成where语句 
+			AND和OR根据实际需求添加
+			AND和OR在实际中如果是第一个会自动移除
+		-->
+		<where>
+			<if test="id!=null">id=#{id}</if>
+			<if test="name!=null">and name=#{name}</if>
+			<if test="age!=null">and age=#{age}</if>
+		</where>
+	</select>
+	
+</mapper>
