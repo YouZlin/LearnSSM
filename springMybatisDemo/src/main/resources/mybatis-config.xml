@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+
+	<settings>
+	    <setting name="logImpl" value="LOG4J2"/><!-- 指定日志实习 -->
+	</settings>
+
+
+	<!-- 在全局配置中设置别名,在配置文件中使用别名 -->
+	<typeAliases>
+		<!-- 方式一 -->
+		<!-- <typeAlias type="com.spring.pojo.User" alias="User"/> -->
+		<!-- 方式二 :对普通类生成默认别名(小写),不包含接口,匿名类,内部类-->
+		<package name="com.spring.pojo"/><!-- com.spring.pojo.User ==> user -->
+	</typeAliases>
+	
+	<!-- PageHelper分页查询 -->
+	<plugins>
+		<plugin interceptor="com.github.pagehelper.PageHelper"></plugin>
+	</plugins>
+
+	
+	
+	<mappers>
+		<package name="com.spring.mapper"/>
+	</mappers>
+</configuration>
