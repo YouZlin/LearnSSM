@@ -7,10 +7,6 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<form action="/springMVCDemo/register.do" method="post"><br/>
-		<input type="email"/><br/>
-		<input type="password" name="password"/><br/>
-		<input type="submit" value="注册"><br/>
-	</form>
+注册成功
 </body>
 </html>
